@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController } from 'ionic-angular';
 import { MovieProvider } from '../../providers/movie/movie';
 
 /**
@@ -30,27 +30,76 @@ export class FeedPage {
 
   public lista_filmes = new Array<any>();
 
+  public loading; 
+  public refresher;
+  public isRefreshing : boolean = false;
+
   public nome_usuario:string = "Luisandro váriavel do código";
 
   constructor(
     public navCtrl: NavController, 
     public navParams: NavParams,
-    private movieProvider: MovieProvider) { }
+    private movieProvider: MovieProvider,
+    public loadingCtrl: LoadingController
+  ) { }
+
+  doRefresh(refresher) {
+
+    this.refresher = refresher;
+    this.isRefreshing = true;
+    this.carregarFilmes();
+
+    console.log('Begin async operation', refresher);
+
+  }
+
+  abreCarregando() {
+    this.loading = this.loadingCtrl.create({
+      content: 'Por favor aguarde...'
+    });
+  
+    this.loading.present();
+  
+    // setTimeout(() => {
+    //   loading.dismiss();
+    // }, 5000);
+  }
+
+  fechaCarregando(){
+    this.loading.dismiss();
+  }
 
   public somaDoisNumeros(valor1:number, valor2:number) : void{
     alert(valor1 + valor2);
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad FeedPage');
+  ionViewDidEnter() {
+    this.carregarFilmes();
+  }
+
+  carregarFilmes(){
+
+    console.log('carregarFilmes FeedPage');
+    this.abreCarregando();
+    
     this.movieProvider.getLatesMovies().subscribe(
       data=>{
         const response = (data as any);
         const objeto_retorno = JSON.parse(response._body);
         this.lista_filmes = objeto_retorno.results;
-        console.log(objeto_retorno);
+        this.fechaCarregando();
+        if (this.refresher){
+          this.refresher.complete();
+          this.refresher.isRefreshing = false;
+        }
+        console.log(objeto_retorno);        
       },
       error => {
+        this.fechaCarregando();
+        if (this.refresher){
+          this.refresher.complete();
+          this.refresher.isRefreshing = false;
+        }
         console.log(error);
       }
     )
