@@ -28,13 +28,14 @@ export class FeedPage {
     time_comment:"11h ago"
   }
 
+  public lista_filmes = new Array<any>();
+
   public nome_usuario:string = "Luisandro váriavel do código";
 
   constructor(
     public navCtrl: NavController, 
     public navParams: NavParams,
-    private movieProvider: MovieProvider) {
-  }
+    private movieProvider: MovieProvider) { }
 
   public somaDoisNumeros(valor1:number, valor2:number) : void{
     alert(valor1 + valor2);
@@ -46,6 +47,7 @@ export class FeedPage {
       data=>{
         const response = (data as any);
         const objeto_retorno = JSON.parse(response._body);
+        this.lista_filmes = objeto_retorno.results;
         console.log(objeto_retorno);
       },
       error => {

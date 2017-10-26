@@ -5,18 +5,19 @@ let config_key_name = "config";
 @Injectable()
 export class ConfigProvider {
 
-  private config = {
-    showSlide: false,
-    name: "",
-    userName: ""
+  // private config = {
+  //   showSlide: false,
+  //   name: "",
+  //   userName: ""
 
-  }
+  // }
+
   constructor() {
     console.log('Hello ConfigProvider Provider');
   }
 
   getConfigData(): any {
-    return localStorage.getItem(config_key_name) || {};
+    return localStorage.getItem(config_key_name);// || {};
 
   }
   // o "?" significa que o parâmetro é opcional
@@ -25,7 +26,7 @@ export class ConfigProvider {
       showSlide: false,
       name: "",
       userName: ""
-    };
+    }; 
 
     if (showSlide) {
       config.showSlide = showSlide;
@@ -37,8 +38,7 @@ export class ConfigProvider {
       config.userName = userName;
     }
 
-    localStorage.setItem(config_key_name,JSON.stringify(config));
-
+    localStorage.setItem(config_key_name, JSON.stringify(config));
   }
 
 }
